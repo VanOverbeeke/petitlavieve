@@ -1,0 +1,48 @@
+<script>
+  function handleCheckbox(cb) {
+    var selected_maten = []
+    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+
+    for (var i = 0; i < checkboxes.length; i++) {
+      selected_maten.push(checkboxes[i].id)
+    }
+
+    //window.alert(JSON.stringify(selected_maten))
+
+    var product_list = document.querySelector('.product-gallery')
+    var alle_artikelen = product_list.getElementsByTagName("li");
+
+    var keep_count = []
+    for (var i = 0; i < product_list.children.length; ++i) {
+      if (product_list.children[i].nodeName != "LI") {
+        break;
+      }
+      raw_data = product_list.children[i].children[0].getAttribute("data-webshop-product")
+      data = JSON.parse(raw_data)
+ //     console.log(data.variantProperties)
+      for (var j = 0; j < data.variantProperties.length; j++) {
+        varpro = data.variantProperties[j]
+   //     console.log(varpro)
+        if (varpro["label"] == "Maat") {
+//          console.log(varpro_maten)
+          console.log(selected_maten)
+          varpro_maten = []
+          for (let q in varpro["values"]) {
+            varpro_maten.push(varpro["values"][q]["label"])
+          }
+          console.log(varpro_maten)
+          intersect = varpro_maten.filter(value => selected_maten.includes(value))
+          if ((selected_maten.length != 0) && (intersect.length == 0)) {
+            keep_count = keep_count + 1
+            product_list.children[i].style.display = "none"
+          } else {
+            product_list.children[i].style.display = ""
+          }
+        }
+      }
+    }
+    var x = document.getElementsByClassName("product-gallery-results").innerHTML
+    console.log(keep_count)
+    console.log(x)
+  }
+</script>
