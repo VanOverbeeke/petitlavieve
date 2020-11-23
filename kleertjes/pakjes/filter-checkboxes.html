@@ -1,15 +1,14 @@
+<!-- Prepare a spot for the checkboxes to be placed -->
 <div id="checkbox-container">
   test div presence
-  <!-- <label class="container">116
-    <input onclick='handleCheckbox(this);' type='checkbox' id="116">
-    <div class="checkmark"></div>
-  </label> -->
 </div>
 
+<!-- Prepare functions to standardize tasks -->
 <script>
-  function create_checkbox(name) {
+  function create_checkbox(name, type) {
     var label = document.createElement("label");
     label.id = "checkbox-".concat(name)
+    label.type = type
     label.innerHTML = name
     label.classList.add("container")
 
@@ -25,14 +24,11 @@
 
     label.appendChild(input)
     label.appendChild(div)
-    console.log("CHECK BIOX CREATOR")
-    console.log(label.innerHTML)
-    console.log(label.constructor.name)
     return label;
   }
 
   function extract_variant_values(product, attribute) {
-    for (var i = 0; i < product.variantProperties.length; i++) {
+    for (let i in product.variantProperties) {
       var variant_properties = data.variantProperties[i]
       if (variant_properties["label"] == attribute) {
         var variant_values = []
@@ -55,9 +51,7 @@
 
   function add_checkboxes(checkboxes) {
     var target_div = document.getElementById("checkbox-container")
-    console.log(target_div.constructor.name)
-    console.log(typeof(target_div));
-    console.log(target_div.innerHTML);
+    target_div.type = "Maat"
     for (let i in checkboxes) {
       target_div.appendChild(checkboxes[i])
     }
@@ -77,21 +71,22 @@
 
   }
 
-  function handleCheckbox(cb, attribute) {
+  function handleCheckbox(cb) {
+    console.log(cb.innerHTML)
     selected_values = get_checked_values()
 
     var product_gallery = document.querySelector('.product-gallery')
-    var all_products = product_gallery.getElementsByTagName("li");
+    var all_products = product_gallery.getElementsByClassName("product-gallery__item--has-button");
 
     var keep_count = []
-    for (let i in all_products) {
+    for (var i = 0; i < all_products.length - 1; i++) {
       raw_data = all_products[i].children[0].getAttribute("data-webshop-product")
       data = JSON.parse(raw_data)
  //     console.log(data.variantProperties)
       for (let j in data.variantProperties) {
         var prop = data.variantProperties[j]
    //     console.log(prop)
-        if (prop["label"] == attribute) {
+        if (prop["label"] == cb.type) {
 //          console.log(prop_maten)
           console.log(selected_values)
           prop_values = []
@@ -120,8 +115,10 @@
   var new_div_list = []
   console.log(new_div_list)
   var label_list = [ "test1", "test2" ]
+  var type = "Maat"
+
   for (let i in label_list) {
-    new_div_list.push(create_checkbox(label_list[i]))
+    new_div_list.push(create_checkbox(label_list[i], type))
   }
   console.log(new_div_list)
   add_checkboxes(new_div_list)
