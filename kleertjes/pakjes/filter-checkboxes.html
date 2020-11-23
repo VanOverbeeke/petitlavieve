@@ -1,0 +1,206 @@
+<div id="checkbox-container">
+  test div presence
+  <!-- <label class="container">116
+    <input onclick='handleCheckbox(this);' type='checkbox' id="116">
+    <div class="checkmark"></div>
+  </label> -->
+</div>
+
+<script>
+  function create_checkbox(name) {
+    var label = document.createElement("label");
+    label.id = "checkbox-".concat(name)
+    label.innerHTML = name
+    label.classList.add("container")
+
+    var input = document.createElement("input")
+    input.onclick = function () {
+      handleCheckbox(this);
+    }
+    input.type = "checkbox"
+    input.id = name
+
+    var div = document.createElement("div")
+    div.classList.add("checkmark")
+
+    label.appendChild(input)
+    label.appendChild(div)
+    console.log("CHECK BIOX CREATOR")
+    console.log(label.innerHTML)
+    console.log(label.constructor.name)
+    return label;
+  }
+
+  function extract_variant_values(product, attribute) {
+    for (var i = 0; i < product.variantProperties.length; i++) {
+      var variant_properties = data.variantProperties[i]
+      if (variant_properties["label"] == attribute) {
+        var variant_values = []
+        for (let j in variant_properties["values"]) {
+          variant_values.push(variant_properties["values"][j]["label"])
+        }
+      }
+    }
+
+    return variant_values;
+  }
+
+  function select_products_with_attribute (products, attribute) {
+    var selected = [];
+    for (let i in products) {
+      selected.push(products[i].id)
+    }
+    return selected
+  }
+
+  function add_checkboxes(checkboxes) {
+    var target_div = document.getElementById("checkbox-container")
+    console.log(target_div.constructor.name)
+    console.log(typeof(target_div));
+    console.log(target_div.innerHTML);
+    for (let i in checkboxes) {
+      target_div.appendChild(checkboxes[i])
+    }
+  }
+
+  function get_checked_values() {
+    var checked_values = []
+    var checked_checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+    for (let c in checked_checkboxes) {
+      checked_values.push(c.id)
+    }
+
+    return checked_values
+  }
+
+  function default_checkbox() {
+
+  }
+
+  function handleCheckbox(cb, attribute) {
+    selected_values = get_checked_values()
+
+    var product_gallery = document.querySelector('.product-gallery')
+    var all_products = product_gallery.getElementsByTagName("li");
+
+    var keep_count = []
+    for (let i in all_products) {
+      raw_data = all_products[i].children[0].getAttribute("data-webshop-product")
+      data = JSON.parse(raw_data)
+ //     console.log(data.variantProperties)
+      for (let j in data.variantProperties) {
+        var prop = data.variantProperties[j]
+   //     console.log(prop)
+        if (prop["label"] == attribute) {
+//          console.log(prop_maten)
+          console.log(selected_values)
+          prop_values = []
+          for (let k in prop["values"]) {
+            var value = prop["values"][k]
+            prop_values.push(value["label"])
+          }
+          console.log(prop_values)
+          intersect = prop_values.filter(value => selected_values.includes(value))
+          if ((selected_values.length != 0) && (intersect.length == 0)) {
+            keep_count = keep_count + 1
+            product.style.display = "none"
+          } else {
+            product.style.display = ""
+          }
+        }
+      }
+    }
+
+    // Prepare for updating the returned product count
+    var x = document.getElementsByClassName("product-gallery-results").innerHTML
+    console.log(keep_count)
+    console.log(x)
+  }
+
+  var new_div_list = []
+  console.log(new_div_list)
+  var label_list = [ "test1", "test2" ]
+  for (let i in label_list) {
+    new_div_list.push(create_checkbox(label_list[i]))
+  }
+  console.log(new_div_list)
+  add_checkboxes(new_div_list)
+</script>
+
+
+
+
+
+
+
+<style>
+  /* Customize the label (the container) */
+  /* Use 'display: inline-block' to get horizontal spread of buttons */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  padding-right: 15px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #9a501e;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+</style>
