@@ -58,6 +58,10 @@
     return checked_values
   }
 
+  function default_checkbox() {
+
+  }
+
   function handleCheckbox(cb, attribute) {
     selected_values = get_checked_values()
 
@@ -96,4 +100,12 @@
     console.log(keep_count)
     console.log(x)
   }
+
+  var new_div_list = []
+  console.log(new_div_list)
+  for (let tester in [ "test1", "test2" ]) {
+    new_div_list.push(create_checkbox(tester))
+  }
+  console.log(new_div_list)
+  add_checkboxes(new_div_list)
 </script>
