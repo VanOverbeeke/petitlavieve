@@ -1,46 +1,97 @@
 <script>
-  function handleCheckbox(cb) {
-    var selected_maten = []
-    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+  function create_checkbox(name) {
+    label = document.createElement("LABEL");
+    label.id = "checkbox-".concat(name)
+    label.innerHTML = name
+    label.classList.add("container")
+    input = document.createElement("INPUT")
+    input.onclick = function () {
+      handleCheckbox(this);
+    }
+    input.type = "checkbox"
+    input.id = name
+    div = document.createElement("DIV")
+    div.classList.add("checkmark")
 
-    for (var i = 0; i < checkboxes.length; i++) {
-      selected_maten.push(checkboxes[i].id)
+    label.appendChild(input)
+    label.appendChild(div)
+
+    return label;
+  }
+
+  function extract_variant_values(product, attribute) {
+    for (var i = 0; i < product.variantProperties.length; i++) {
+      variant_properties = data.variantProperties[i]
+      if (variant_properties["label"] == attribute) {
+        variant_values = []
+        for (let j in variant_properties["values"]) {
+          variant_values.push(variant_properties["values"][j]["label"])
+        }
+      }
     }
 
-    //window.alert(JSON.stringify(selected_maten))
+    return variant_values;
+  }
 
-    var product_list = document.querySelector('.product-gallery')
-    var alle_artikelen = product_list.getElementsByTagName("li");
+  function select_products_with_attribute (products, attribute) {
+    var selected = [];
+    for (let product in products) {
+      selected.push(product.id)
+    }
+    return selected
+  }
+
+  function add_checkboxes(checkboxes) {
+    target_div = document.getElementById("checkbox-container")
+    for (let c in checkboxes) {
+      target_div.appendChild(c)
+    }
+  }
+
+  function get_checked_values() {
+    var checked_values = []
+    checked_checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+    for (let c in checked_checkboxes {
+      checked_values.push(c.id)
+    }
+
+    return checked_values
+  }
+
+  function handleCheckbox(cb, attribute) {
+    selected_values = get_checked_values()
+
+    var product_gallery = document.querySelector('.product-gallery')
+    var all_products = product_gallery.getElementsByTagName("li");
 
     var keep_count = []
-    for (var i = 0; i < product_list.children.length; ++i) {
-      if (product_list.children[i].nodeName != "LI") {
-        break;
-      }
-      raw_data = product_list.children[i].children[0].getAttribute("data-webshop-product")
+    for (let product in all_products) {
+      raw_data = product.children[0].getAttribute("data-webshop-product")
       data = JSON.parse(raw_data)
+      window.alert(raw_data)
  //     console.log(data.variantProperties)
-      for (var j = 0; j < data.variantProperties.length; j++) {
-        varpro = data.variantProperties[j]
-   //     console.log(varpro)
-        if (varpro["label"] == "Maat") {
-//          console.log(varpro_maten)
-          console.log(selected_maten)
-          varpro_maten = []
-          for (let q in varpro["values"]) {
-            varpro_maten.push(varpro["values"][q]["label"])
+      for (let prop in data.variantProperties) {
+   //     console.log(prop)
+        if (prop["label"] == attribute) {
+//          console.log(prop_maten)
+          console.log(selected_values)
+          prop_values = []
+          for (let value in prop["values"]) {
+            prop_values.push(value["label"])
           }
-          console.log(varpro_maten)
-          intersect = varpro_maten.filter(value => selected_maten.includes(value))
-          if ((selected_maten.length != 0) && (intersect.length == 0)) {
+          console.log(prop_values)
+          intersect = prop_values.filter(value => selected_values.includes(value))
+          if ((selected_values.length != 0) && (intersect.length == 0)) {
             keep_count = keep_count + 1
-            product_list.children[i].style.display = "none"
+            product.style.display = "none"
           } else {
-            product_list.children[i].style.display = ""
+            product.style.display = ""
           }
         }
       }
     }
+
+    // Prepare for updating the returned product count
     var x = document.getElementsByClassName("product-gallery-results").innerHTML
     console.log(keep_count)
     console.log(x)
